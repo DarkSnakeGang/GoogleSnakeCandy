@@ -1,6 +1,6 @@
 import urllib.request
 
-url = "https://raw.githubusercontent.com/DarkSnakeGang/GoogleSnakePudding/main/PuddingMod.js"  # Replace with the actual URL of the file you want to download
+url = "https://raw.githubusercontent.com/DarkSnakeGang/GoogleSnakePudding/main/MorePudding.js"  # Replace with the actual URL of the file you want to download
 destination_file = "PuddingMod.js"  # Replace with the desired local file name
 
 urllib.request.urlretrieve(url, destination_file)

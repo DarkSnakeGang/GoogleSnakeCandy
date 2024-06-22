@@ -2,6 +2,8 @@ window.CandyMod = {};
 
 window.CandyMod.runCodeBefore = function () {
     window.PuddingMod.runCodeBefore();
+    window.VisibilityModCode.runCodeBefore();
+    window.moreMenu.runCodeBefore();
     console.log("Adding Candy Mode");
     candy_icon = "https://i.postimg.cc/rsSFx6gg/candy.png"
     
@@ -15,15 +17,50 @@ window.CandyMod.runCodeBefore = function () {
 
     document.querySelector('#trophy').appendChild(uiImage(candy_icon));
 
-    trophy_jsname = document.querySelector('img[src$="trophy_00.png"]').getAttribute("jsname")
-    window.trophy_src = `document.querySelector('img[jsname="${trophy_jsname}"]').src `
-    deathscreen_trophy_jsname = 'LpoWPe'
+    trophy_jsname = document.querySelector('img[src$="trophy_00.png"]').getAttribute("jsname");
+    window.trophy_src = `document.querySelector('img[jsname="${trophy_jsname}"]').src `;
+    deathscreen_trophy_jsname = 'LpoWPe';
 
+    window.candy_blending = false;
+    window.toggle_candy_blender = function(){
+        window.candy_blending = !window.candy_blending;
+        window.correct_candy_selection();
+    }
+    childElements = document.querySelector('.PWIidc');
+    candy_blend = childElements.children[18].children[0];
+
+    window.correct_candy_selection = function correct_candy_selection() {
+        if (window.candy_blending) {
+            candy_blend.setAttribute('class', "blender_icon blender_icon_on");
+            candy_blend.innerHTML = `<img class="blender_icon_img blender_icon_img_selected" src="` + candy_icon + `" alt>`;
+        } else {
+            candy_blend.setAttribute('class', "blender_icon");
+            candy_blend.innerHTML = `<img class="blender_icon_img" src="` + candy_icon + `" alt>`;
+        }
+    }
+
+    window.add_candy = function add_candy() {
+        // Blender changes attempt
+        childElements = document.querySelector('.PWIidc');
+        //for (let index = 0; index < childElements.children.length; index++) {
+        //    const element = childElements.children[index];
+        //    element.addEventListener('mouseup', window.correct_candy_selection)
+        //}
+        candy_blend = childElements.children[18].children[0];
+        candy_blend.setAttribute('aria-label', "Toggle game mode");
+        //candy_blend.setAttribute('role', "button");
+        candy_blend.setAttribute('tabindex', "0");
+        //candy_blend.setAttribute('jsaction', "oAxMnf");
+        candy_blend.setAttribute('class', "blender_icon");
+        candy_blend.innerHTML = `<img class="blender_icon_img" src="` + candy_icon + `" alt>`;
+        candy_blend.addEventListener('click', window.toggle_candy_blender)
+    }
+    window.add_candy();
 }
 
 
 window.CandyMod.alterSnakeCode = function (code) {
-    code = window.PuddingMod.alterSnakeCode(code);
+    code = window.moreMenu.alterSnakeCode(window.VisibilityModCode.alterSnakeCode(window.PuddingMod.alterSnakeCode(code)));
     console.log("Coding Candy Mode into the game");
 
     window.updateTrophySRC = function updateTrophySRC() {
@@ -53,12 +90,20 @@ window.CandyMod.alterSnakeCode = function (code) {
     snake_length = code.match(candy_logic)[0].split('+')[0]
 
     candy_logic_set = `$&
-    ${snake_length} += Math.floor(Math.random() * 6);
+    if((window.CurrentModeNum === 18 && window.candy_blending) || window.CurrentModeNum === 19) {
+        ${snake_length} += Math.floor(Math.random() * 6);
+    }
     ;
     `
     code = code.assertReplace(candy_logic, candy_logic_set)
 
-    console.log(code)
+    // Add candy to Blender settings, cleared on: a.iGa.clear();
+    blender_limit = new RegExp(/a\.[a-zA-Z0-9_$]{1,3}\.forEach\(function\([a-zA-Z0-9_$]{1,3},[a-zA-Z0-9_$]{1,3}\)/)
+    blender_limit_code = `
+    if(window.candy_blending){b.push(19);}
+    ${code.match(blender_limit)}`
+
+    code = code.assertReplace(blender_limit, blender_limit_code)
 
     return code;
 }
